@@ -1,8 +1,10 @@
 package rules
 
 import (
-	"errors"
+	"go/token"
+	"strings"
 
+	"github.com/P3rCh1/logcheck/internal/utils"
 	"github.com/cloudflare/ahocorasick"
 )
 
@@ -10,18 +12,23 @@ var (
 	banWords = []string{
 		"token",
 		"key",
+		"pwd",
+		"bearer",
 		"password",
+		"secret",
 	}
 
 	matcher = ahocorasick.NewStringMatcher(banWords)
 
-	ErrSensitive = errors.New("log message should not contains sensitive values")
+	SensitiveLeakReport = "log message should not contains sensitive values"
 )
 
-func CheckSensitive(msg string) error {
-	if matcher.Contains([]byte(msg)) {
-		return ErrSensitive
+func CheckSensitiveLeak(info *utils.LogInfo) (string, token.Pos) {
+	for _, name := range info.ArgNames {
+		if matcher.Contains([]byte(strings.ToLower(name.Data))) {
+			return SensitiveLeakReport, name.Pos
+		}
 	}
 
-	return nil
+	return "", token.NoPos
 }

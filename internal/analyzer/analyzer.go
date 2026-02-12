@@ -1,7 +1,9 @@
 package analyzer
 
 import (
+	"fmt"
 	"go/ast"
+	"go/token"
 
 	"github.com/P3rCh1/logcheck/internal/rules"
 	"github.com/P3rCh1/logcheck/internal/utils"
@@ -14,7 +16,7 @@ const (
 )
 
 type checker struct {
-	check    func(string) error
+	check    func(*utils.LogInfo) (string, token.Pos)
 	category string
 }
 
@@ -39,7 +41,7 @@ var (
 			category: StyleCategory,
 		},
 		{
-			check:    rules.CheckSensitive,
+			check:    rules.CheckSensitiveLeak,
 			category: SecurityCategory,
 		},
 	}
@@ -57,17 +59,19 @@ func run(pass *analysis.Pass) (any, error) {
 				return true
 			}
 
-			msg, pos := utils.ExtractMessage(pass, call)
-			if msg == "" {
+			info := utils.ExtractLogInfo(pass, call)
+			if info == nil {
 				return true
 			}
 
+			fmt.Println(info)
+
 			for _, checker := range checkers {
-				if err := checker.check(msg); err != nil {
+				if reportMsg, pos := checker.check(info); pos != token.NoPos {
 					pass.Report(
 						analysis.Diagnostic{
 							Pos:      pos,
-							Message:  err.Error(),
+							Message:  reportMsg,
 							Category: checker.category,
 						},
 					)
