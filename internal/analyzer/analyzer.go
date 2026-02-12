@@ -36,7 +36,7 @@ var (
 			category: StyleCategory,
 		},
 		{
-			check:    rules.CheckLetters,
+			check:    rules.CheckNoSymbolsAndEmoji,
 			category: StyleCategory,
 		},
 		{

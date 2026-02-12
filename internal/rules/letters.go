@@ -7,12 +7,12 @@ import (
 	"github.com/P3rCh1/logcheck/internal/utils"
 )
 
-const NotLetterReport = "log message should contains only letters with spaces"
+const NotLetterReport = "log message should contains only letters, numbers and spaces"
 
-func CheckLetters(info *utils.LogInfo) (string, token.Pos) {
+func CheckNoSymbolsAndEmoji(info *utils.LogInfo) (string, token.Pos) {
 	for _, msg := range info.MsgParts {
 		for _, r := range msg.Data {
-			if !unicode.IsLetter(r) && !unicode.IsSpace(r) {
+			if !unicode.IsLetter(r) && !unicode.IsSpace(r) && !unicode.IsDigit(r) {
 				return NotLetterReport, msg.Pos
 			}
 		}
