@@ -8,9 +8,7 @@ import (
 	"github.com/P3rCh1/logcheck/internal/utils"
 )
 
-const (
-	CapitalizedReport = "log message should not be capitalized"
-)
+const CapitalizedReport = "log message should not be capitalized"
 
 func CheckLowercase(info *utils.LogInfo) (string, token.Pos) {
 	for _, msg := range info.MsgParts {

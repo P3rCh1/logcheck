@@ -14,26 +14,16 @@ type TypeInfo struct {
 
 var methods = map[TypeInfo]map[string]struct{}{
 	{Package: "log/slog", Name: "Logger"}: {
-		"Info": {}, "Infof": {}, "Infoln": {},
-		"Debug": {}, "Debugf": {}, "Debugln": {},
-		"Warn": {}, "Warnf": {}, "Warnln": {},
-		"Error": {}, "Errorf": {}, "Errorln": {},
+		"Info": {}, "Debug": {}, "Warn": {}, "Error": {},
 	},
 
 	{Package: "log/slog"}: {
-		"Info": {}, "Infof": {}, "Infoln": {},
-		"Debug": {}, "Debugf": {}, "Debugln": {},
-		"Warn": {}, "Warnf": {}, "Warnln": {},
-		"Error": {}, "Errorf": {}, "Errorln": {},
+		"Info": {}, "Debug": {}, "Warn": {}, "Error": {},
 	},
 
 	{Package: "go.uber.org/zap", Name: "Logger"}: {
 		"Debug": {}, "Info": {}, "Warn": {}, "Error": {},
 		"DPanic": {}, "Panic": {}, "Fatal": {},
-		"Debugw": {}, "Infow": {}, "Warnw": {}, "Errorw": {},
-		"DPanicw": {}, "Panicw": {}, "Fatalw": {},
-		"Check": {},
-		"Sync":  {},
 	},
 
 	{Package: "go.uber.org/zap", Name: "SugaredLogger"}: {
@@ -44,8 +34,6 @@ var methods = map[TypeInfo]map[string]struct{}{
 		"DPanic": {}, "DPanicf": {}, "DPanicw": {}, "DPanicln": {},
 		"Panic": {}, "Panicf": {}, "Panicw": {}, "Panicln": {},
 		"Fatal": {}, "Fatalf": {}, "Fatalw": {}, "Fatalln": {},
-		"Check": {},
-		"Sync":  {},
 	},
 }
 

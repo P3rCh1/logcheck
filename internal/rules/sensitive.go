@@ -19,9 +19,9 @@ var (
 	}
 
 	matcher = ahocorasick.NewStringMatcher(banWords)
-
-	SensitiveLeakReport = "log message should not contains sensitive values"
 )
+
+const SensitiveLeakReport = "log message should not contains sensitive values"
 
 func CheckSensitiveLeak(info *utils.LogInfo) (string, token.Pos) {
 	for _, name := range info.ArgNames {
