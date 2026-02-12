@@ -1,7 +1,6 @@
 package analyzer
 
 import (
-	"fmt"
 	"go/ast"
 	"go/token"
 
@@ -63,8 +62,6 @@ func run(pass *analysis.Pass) (any, error) {
 			if info == nil {
 				return true
 			}
-
-			fmt.Println(info)
 
 			for _, checker := range checkers {
 				if reportMsg, pos := checker.check(info); pos != token.NoPos {

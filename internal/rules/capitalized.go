@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	EmptyMsg    = "log message should not be empty"
 	Capitalized = "log message should not be capitalized"
 )
 
@@ -25,5 +24,5 @@ func CheckLowercase(info *utils.LogInfo) (string, token.Pos) {
 		}
 	}
 
-	return EmptyMsg, info.StartPos
+	return "", token.NoPos
 }
