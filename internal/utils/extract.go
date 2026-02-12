@@ -15,7 +15,6 @@ type ItemAST struct {
 type LogInfo struct {
 	MsgParts []ItemAST
 	ArgNames []ItemAST
-	StartPos token.Pos
 }
 
 func ExtractLogInfo(pass *analysis.Pass, call *ast.CallExpr) *LogInfo {
@@ -23,7 +22,7 @@ func ExtractLogInfo(pass *analysis.Pass, call *ast.CallExpr) *LogInfo {
 		return nil
 	}
 
-	msg := &LogInfo{StartPos: call.Pos()}
+	msg := &LogInfo{}
 
 	msg.MsgParts = extractMsgParts(call.Args[0])
 

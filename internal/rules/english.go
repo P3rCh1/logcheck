@@ -16,7 +16,7 @@ func CheckEnglish(info *utils.LogInfo) (string, token.Pos) {
 				continue
 			}
 
-			if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')) {
+			if !unicode.Is(unicode.Latin, r) {
 				return NotEnglishReport, msg.Pos
 			}
 		}

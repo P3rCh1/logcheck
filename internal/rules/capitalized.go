@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	Capitalized = "log message should not be capitalized"
+	CapitalizedReport = "log message should not be capitalized"
 )
 
 func CheckLowercase(info *utils.LogInfo) (string, token.Pos) {
@@ -17,7 +17,7 @@ func CheckLowercase(info *utils.LogInfo) (string, token.Pos) {
 		if len(msg.Data) != 0 {
 			r, _ := utf8.DecodeRuneInString(msg.Data)
 			if unicode.IsUpper(r) {
-				return Capitalized, msg.Pos
+				return CapitalizedReport, msg.Pos
 			}
 
 			return "", token.NoPos
