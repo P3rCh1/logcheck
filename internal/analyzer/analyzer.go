@@ -4,52 +4,28 @@ import (
 	"go/ast"
 	"go/token"
 
+	"github.com/P3rCh1/logcheck/internal/config"
 	"github.com/P3rCh1/logcheck/internal/rules"
 	"github.com/P3rCh1/logcheck/internal/utils"
 	"golang.org/x/tools/go/analysis"
 )
 
-const (
-	StyleCategory    = "style"
-	SecurityCategory = "security"
-)
-
-type checker struct {
-	check    func(*utils.LogInfo) (string, token.Pos)
-	category string
-}
-
-var (
-	Analyzer = &analysis.Analyzer{
+func NewAnalyzer(cfg *config.Config) *analysis.Analyzer {
+	return &analysis.Analyzer{
 		Name: "logcheck",
 		Doc:  "reports invalid log messages",
-		Run:  run,
-	}
-
-	checkers = []checker{
-		{
-			check:    rules.CheckLowercase,
-			category: StyleCategory,
-		},
-		{
-			check:    rules.CheckEnglish,
-			category: StyleCategory,
-		},
-		{
-			check:    rules.CheckNoSymbolsAndEmoji,
-			category: StyleCategory,
-		},
-		{
-			check:    rules.CheckSensitiveLeak,
-			category: SecurityCategory,
+		Run: func(pass *analysis.Pass) (any, error) {
+			return run(pass, cfg)
 		},
 	}
-)
+}
 
-func run(pass *analysis.Pass) (any, error) {
+func run(pass *analysis.Pass, cfg *config.Config) (any, error) {
+	rules := rules.Rules(cfg)
+
 	for _, file := range pass.Files {
-		ast.Inspect(file, func(n ast.Node) bool {
-			call, ok := n.(*ast.CallExpr)
+		ast.Inspect(file, func(node ast.Node) bool {
+			call, ok := node.(*ast.CallExpr)
 			if !ok {
 				return true
 			}
@@ -63,15 +39,17 @@ func run(pass *analysis.Pass) (any, error) {
 				return true
 			}
 
-			for _, checker := range checkers {
-				if reportMsg, pos := checker.check(info); pos != token.NoPos {
-					pass.Report(
-						analysis.Diagnostic{
-							Pos:      pos,
-							Message:  reportMsg,
-							Category: checker.category,
-						},
-					)
+			for _, checkerName := range cfg.EnabledRules {
+				if checker, ok := rules[checkerName]; ok {
+					if reportMsg, pos := checker.Check(info); pos != token.NoPos {
+						pass.Report(
+							analysis.Diagnostic{
+								Pos:      pos,
+								Message:  reportMsg,
+								Category: checker.Category,
+							},
+						)
+					}
 				}
 			}
 

@@ -12,7 +12,7 @@ func Positive() {
 	slogLogger := slog.Default()
 
 	slogLogger.Debug("debug message")
-	slogLogger.Info("info message")
+	slogLogger.Info("infomessage")
 	slogLogger.Warn("warn message")
 	slogLogger.Error("error message")
 
@@ -44,7 +44,7 @@ func Positive() {
 	sugar.Error("error message")
 	sugar.Errorf("error %s", "message")
 	sugar.Errorw("error message")
-	sugar.Errorln("error message")
+	sugar.Errorln("error message 10")
 	sugar.DPanic("dpanic message")
 	sugar.DPanicf("dpanic %s", "message")
 	sugar.DPanicw("dpanic message")

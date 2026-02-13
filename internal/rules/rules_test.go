@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/P3rCh1/logcheck/internal/utils"
+	"github.com/cloudflare/ahocorasick"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -237,7 +238,10 @@ func TestCheckSensitiveLeak(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actualMsg, actualPos := CheckSensitiveLeak(test.logInfo)
+			actualMsg, actualPos := CheckSensitiveLeak(
+				ahocorasick.NewStringMatcher(SensitiveWordsDefault),
+				test.logInfo,
+			)
 			assert.Equal(t, test.expMsg, actualMsg)
 			assert.Equal(t, test.expPos, actualPos)
 		})
@@ -268,15 +272,15 @@ func TestCheckSymbolsAndEmoji(t *testing.T) {
 			},
 		},
 		{
-			name: "with russian",
+			name: "with allowed",
 			logInfo: &utils.LogInfo{
 				MsgParts: []utils.ItemAST{
 					{
-						Data: "starting",
+						Data: "starting%%",
 						Pos:  token.Pos(100),
 					},
 					{
-						Data: "сервер",
+						Data: "сервер 1.0",
 						Pos:  token.Pos(200),
 					},
 				},
@@ -320,7 +324,7 @@ func TestCheckSymbolsAndEmoji(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actualMsg, actualPos := CheckNoSymbolsAndEmoji(test.logInfo)
+			actualMsg, actualPos := CheckNoSymbolsAndEmoji(map[rune]struct{}{'%': {}, '.': {}}, test.logInfo)
 			assert.Equal(t, test.expMsg, actualMsg)
 			assert.Equal(t, test.expPos, actualPos)
 		})

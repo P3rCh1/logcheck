@@ -1,5 +1,8 @@
 version: "2"
 
+issues:
+  max-same-issues: 0
+
 linters:
   default: none
   enable:
@@ -8,3 +11,7 @@ linters:
     custom:
       logcheck:
         type: "module"
+        settings:
+          enabled-rules: ["capitalize", "symbols", "sensitive"]
+          sensitive-words: ["token", "bearer"]
+          allowed-symbols: "%"
