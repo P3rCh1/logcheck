@@ -15,8 +15,8 @@ func main() {
 	slog.Warn("Warn message")   // want "log message should not be capitalized"
 	slog.Error("Error message") // want "log message should not be capitalized"
 
-	logger.Debug("Debug message")   // want "log message should not be capitalized"
-	logger.Info("Info message")     // want "log message should not be capitalized"
+	logger.Debug(`Debug message`)   // want "log message should not be capitalized"
+	logger.Info(`Info message`)     // want "log message should not be capitalized"
 	logger.Warn("Warn message")     // want "log message should not be capitalized"
 	logger.Error("Error message")   // want "log message should not be capitalized"
 	logger.DPanic("DPanic message") // want "log message should not be capitalized"

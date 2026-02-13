@@ -1,11 +1,11 @@
 package rules
 
 import (
-	"go/token"
 	"strings"
 
 	"github.com/P3rCh1/logcheck/internal/utils"
 	"github.com/cloudflare/ahocorasick"
+	"golang.org/x/tools/go/analysis"
 )
 
 var SensitiveWordsDefault = []string{
@@ -19,12 +19,17 @@ var SensitiveWordsDefault = []string{
 
 const SensitiveLeakReport = "log message should not contains sensitive values"
 
-func CheckSensitiveLeak(matcher *ahocorasick.Matcher, info *utils.LogInfo) (string, token.Pos) {
-	for _, name := range info.ArgNames {
-		if matcher.Contains([]byte(strings.ToLower(name.Data))) {
-			return SensitiveLeakReport, name.Pos
+func CheckSensitiveLeak(matcher *ahocorasick.Matcher, info *utils.LogInfo) *analysis.Diagnostic {
+	for _, arg := range info.ArgNames {
+		if matcher.Contains([]byte(strings.ToLower(arg.Data))) {
+			return &analysis.Diagnostic{
+				Pos:      arg.Pos,
+				End:      arg.End,
+				Message:  SensitiveLeakReport,
+				Category: StyleCategory,
+			}
 		}
 	}
 
-	return "", token.NoPos
+	return nil
 }

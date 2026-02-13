@@ -2,7 +2,6 @@ package analyzer
 
 import (
 	"go/ast"
-	"go/token"
 
 	"github.com/P3rCh1/logcheck/internal/config"
 	"github.com/P3rCh1/logcheck/internal/rules"
@@ -41,14 +40,8 @@ func run(pass *analysis.Pass, cfg *config.Config) (any, error) {
 
 			for _, checkerName := range cfg.EnabledRules {
 				if checker, ok := rules[checkerName]; ok {
-					if reportMsg, pos := checker.Check(info); pos != token.NoPos {
-						pass.Report(
-							analysis.Diagnostic{
-								Pos:      pos,
-								Message:  reportMsg,
-								Category: checker.Category,
-							},
-						)
+					if diagnostic := checker(info); diagnostic != nil {
+						pass.Report(*diagnostic)
 					}
 				}
 			}

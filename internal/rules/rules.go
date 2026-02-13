@@ -1,11 +1,10 @@
 package rules
 
 import (
-	"go/token"
-
 	"github.com/P3rCh1/logcheck/internal/config"
 	"github.com/P3rCh1/logcheck/internal/utils"
 	"github.com/cloudflare/ahocorasick"
+	"golang.org/x/tools/go/analysis"
 )
 
 var RulesDefault = []string{"capitalize", "english", "symbols", "sensitive"}
@@ -15,12 +14,9 @@ const (
 	SecurityCategory = "security"
 )
 
-type Checker struct {
-	Check    func(*utils.LogInfo) (string, token.Pos)
-	Category string
-}
+type ruleFunc func(*utils.LogInfo) *analysis.Diagnostic
 
-func Rules(cfg *config.Config) map[string]Checker {
+func Rules(cfg *config.Config) map[string]ruleFunc {
 	if len(cfg.EnabledRules) == 0 {
 		cfg.EnabledRules = RulesDefault
 	}
@@ -34,26 +30,14 @@ func Rules(cfg *config.Config) map[string]Checker {
 		allowed[r] = struct{}{}
 	}
 
-	return map[string]Checker{
-		"capitalize": {
-			Check:    CheckLowercase,
-			Category: StyleCategory,
+	return map[string]ruleFunc{
+		"capitalize": CheckLowercase,
+		"english":    CheckEnglish,
+		"symbols": func(info *utils.LogInfo) *analysis.Diagnostic {
+			return CheckNoSymbolsAndEmoji(allowed, info)
 		},
-		"english": {
-			Check:    CheckEnglish,
-			Category: StyleCategory,
-		},
-		"symbols": {
-			Check: func(info *utils.LogInfo) (string, token.Pos) {
-				return CheckNoSymbolsAndEmoji(allowed, info)
-			},
-			Category: StyleCategory,
-		},
-		"sensitive": {
-			Check: func(info *utils.LogInfo) (string, token.Pos) {
-				return CheckSensitiveLeak(ahocorasick.NewStringMatcher(cfg.SensitiveWords), info)
-			},
-			Category: SecurityCategory,
+		"sensitive": func(info *utils.LogInfo) *analysis.Diagnostic {
+			return CheckSensitiveLeak(ahocorasick.NewStringMatcher(cfg.SensitiveWords), info)
 		},
 	}
 }

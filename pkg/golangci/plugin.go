@@ -19,8 +19,6 @@ type PluginLogCheck struct {
 }
 
 func New(settings any) (register.LinterPlugin, error) {
-	fmt.Println(settings)
-
 	cfg, err := register.DecodeSettings[config.Config](settings)
 	if err != nil {
 		return nil, fmt.Errorf("decode settings: %w", err)

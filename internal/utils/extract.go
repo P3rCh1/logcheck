@@ -28,8 +28,10 @@ var edgeMethods = map[TypeInfo]map[string]struct{}{
 }
 
 type ItemAST struct {
-	Data string
-	Pos  token.Pos
+	Data       string
+	Pos        token.Pos
+	End        token.Pos
+	IsRawQuote bool
 }
 
 type LogInfo struct {
@@ -61,14 +63,35 @@ func extractArgNames(pass *analysis.Pass, e ast.Expr) []ItemAST {
 	unwrap = func(e ast.Expr) {
 		switch node := e.(type) {
 		case *ast.Ident:
-			args = append(args, ItemAST{node.Name, e.Pos()})
+			args = append(
+				args,
+				ItemAST{
+					Data: node.Name,
+					Pos:  e.Pos(),
+					End:  e.End(),
+				},
+			)
 
 		case *ast.SelectorExpr:
-			args = append(args, ItemAST{node.Sel.Name, e.Pos()})
+			args = append(
+				args,
+				ItemAST{
+					Data: node.Sel.Name,
+					Pos:  e.Pos(),
+					End:  e.End(),
+				},
+			)
 
 		case *ast.IndexExpr:
 			if ident, ok := node.X.(*ast.Ident); ok {
-				args = append(args, ItemAST{ident.Name, e.Pos()})
+				args = append(
+					args,
+					ItemAST{
+						Data: ident.Name,
+						Pos:  e.Pos(),
+						End:  e.End(),
+					},
+				)
 			}
 
 		case *ast.BinaryExpr:
@@ -78,9 +101,16 @@ func extractArgNames(pass *analysis.Pass, e ast.Expr) []ItemAST {
 			}
 
 		case *ast.CallExpr:
-
 			if ident, ok := node.Fun.(*ast.Ident); ok {
-				args = append(args, ItemAST{ident.Name, e.Pos()})
+				args = append(
+					args,
+					ItemAST{
+						Data: ident.Name,
+						Pos:  e.Pos(),
+						End:  e.End(),
+					},
+				)
+
 			} else if sel, ok := node.Fun.(*ast.SelectorExpr); ok {
 				if obj := pass.TypesInfo.ObjectOf(sel.Sel); obj != nil && obj.Pkg() != nil {
 					typeInfo := TypeInfo{Package: obj.Pkg().Path()}
@@ -95,7 +125,14 @@ func extractArgNames(pass *analysis.Pass, e ast.Expr) []ItemAST {
 					}
 				}
 
-				args = append(args, ItemAST{sel.Sel.Name, e.Pos()})
+				args = append(
+					args,
+					ItemAST{
+						Data: sel.Sel.Name,
+						Pos:  e.Pos(),
+						End:  e.End(),
+					},
+				)
 			}
 		}
 	}
@@ -112,7 +149,15 @@ func extractMsgParts(e ast.Expr) []ItemAST {
 		switch node := e.(type) {
 		case *ast.BasicLit:
 			if node.Kind == token.STRING {
-				parts = append(parts, ItemAST{unquote(node.Value), e.Pos()})
+				parts = append(
+					parts,
+					ItemAST{
+						Data:       unquote(node.Value),
+						Pos:        e.Pos(),
+						End:        e.End(),
+						IsRawQuote: len(node.Value) != 0 && node.Value[0] == '`',
+					},
+				)
 			}
 
 		case *ast.BinaryExpr:

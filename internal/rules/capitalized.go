@@ -1,26 +1,50 @@
 package rules
 
 import (
-	"go/token"
 	"unicode"
 	"unicode/utf8"
 
 	"github.com/P3rCh1/logcheck/internal/utils"
+	"golang.org/x/tools/go/analysis"
 )
 
 const CapitalizedReport = "log message should not be capitalized"
 
-func CheckLowercase(info *utils.LogInfo) (string, token.Pos) {
+func CheckLowercase(info *utils.LogInfo) *analysis.Diagnostic {
 	for _, msg := range info.MsgParts {
 		if len(msg.Data) != 0 {
-			r, _ := utf8.DecodeRuneInString(msg.Data)
+			r, size := utf8.DecodeRuneInString(msg.Data)
 			if unicode.IsUpper(r) {
-				return CapitalizedReport, msg.Pos
+				quote := `"`
+				if msg.IsRawQuote {
+					quote = "`"
+				}
+
+				fix := quote + string(unicode.ToLower(r)) + msg.Data[size:] + quote
+
+				return &analysis.Diagnostic{
+					Pos:      msg.Pos,
+					End:      msg.End,
+					Message:  CapitalizedReport,
+					Category: StyleCategory,
+					SuggestedFixes: []analysis.SuggestedFix{
+						{
+							Message: "convert first letter to lowercase",
+							TextEdits: []analysis.TextEdit{
+								{
+									Pos:     msg.Pos,
+									End:     msg.End,
+									NewText: []byte(fix),
+								},
+							},
+						},
+					},
+				}
 			}
 
-			return "", token.NoPos
+			return nil
 		}
 	}
 
-	return "", token.NoPos
+	return nil
 }

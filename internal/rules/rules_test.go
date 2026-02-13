@@ -104,9 +104,17 @@ func TestCheckLowercase(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actualMsg, actualPos := CheckLowercase(test.logInfo)
-			assert.Equal(t, test.expMsg, actualMsg)
-			assert.Equal(t, test.expPos, actualPos)
+			diag := CheckLowercase(test.logInfo)
+
+			if test.expMsg == "" {
+				assert.Nil(t, diag, "expected no diagnostic")
+			} else {
+				assert.NotNil(t, diag, "expected diagnostic")
+				if diag != nil {
+					assert.Equal(t, test.expMsg, diag.Message)
+					assert.Equal(t, test.expPos, diag.Pos)
+				}
+			}
 		})
 	}
 }
@@ -170,9 +178,17 @@ func TestCheckEnglish(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actualMsg, actualPos := CheckEnglish(test.logInfo)
-			assert.Equal(t, test.expMsg, actualMsg)
-			assert.Equal(t, test.expPos, actualPos)
+			diag := CheckEnglish(test.logInfo)
+
+			if test.expMsg == "" {
+				assert.Nil(t, diag, "expected no diagnostic")
+			} else {
+				assert.NotNil(t, diag, "expected diagnostic")
+				if diag != nil {
+					assert.Equal(t, test.expMsg, diag.Message)
+					assert.Equal(t, test.expPos, diag.Pos)
+				}
+			}
 		})
 	}
 }
@@ -238,12 +254,20 @@ func TestCheckSensitiveLeak(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actualMsg, actualPos := CheckSensitiveLeak(
+			diag := CheckSensitiveLeak(
 				ahocorasick.NewStringMatcher(SensitiveWordsDefault),
 				test.logInfo,
 			)
-			assert.Equal(t, test.expMsg, actualMsg)
-			assert.Equal(t, test.expPos, actualPos)
+
+			if test.expMsg == "" {
+				assert.Nil(t, diag, "expected no diagnostic")
+			} else {
+				assert.NotNil(t, diag, "expected diagnostic")
+				if diag != nil {
+					assert.Equal(t, test.expMsg, diag.Message)
+					assert.Equal(t, test.expPos, diag.Pos)
+				}
+			}
 		})
 	}
 }
@@ -324,9 +348,17 @@ func TestCheckSymbolsAndEmoji(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actualMsg, actualPos := CheckNoSymbolsAndEmoji(map[rune]struct{}{'%': {}, '.': {}}, test.logInfo)
-			assert.Equal(t, test.expMsg, actualMsg)
-			assert.Equal(t, test.expPos, actualPos)
+			diag := CheckNoSymbolsAndEmoji(map[rune]struct{}{'%': {}, '.': {}}, test.logInfo)
+
+			if test.expMsg == "" {
+				assert.Nil(t, diag, "expected no diagnostic")
+			} else {
+				assert.NotNil(t, diag, "expected diagnostic")
+				if diag != nil {
+					assert.Equal(t, test.expMsg, diag.Message)
+					assert.Equal(t, test.expPos, diag.Pos)
+				}
+			}
 		})
 	}
 }
