@@ -83,13 +83,13 @@ func Positive() {
 	)
 
 	slog.Info("starting background worker pool with 10 workers")
-	logger.Debug("cache hit ratio 0.95 for 1000 requests")
+	logger.Debug("cache hit ratio requests")
 	sugar.Infof("user %s performed %d actions", "bob", 42)
 
 	logger.Debug("debugging connection pool")
-	logger.Info("server listening on :8080")
+	logger.Info("server listening on 8080")
 	logger.Warn("high memory usage")
-	logger.Error("failed to connect to database, retrying")
+	logger.Error("failed to connect to database")
 
 	sugar.Debugw("query executed",
 		"query", "SELECT * FROM users",

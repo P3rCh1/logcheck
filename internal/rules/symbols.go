@@ -13,7 +13,7 @@ func symbolOrEmoji(r rune) bool {
 	return unicode.IsLetter(r) ||
 		unicode.IsSpace(r) ||
 		unicode.IsDigit(r) ||
-		r == '%' || r == '.' || r == ',' || r == ':'
+		r == '%'
 }
 
 func CheckNoSymbolsAndEmoji(info *utils.LogInfo) (string, token.Pos) {
