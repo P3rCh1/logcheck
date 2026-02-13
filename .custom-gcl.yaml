@@ -1,0 +1,9 @@
+version: v2.9.0
+name: logcheck
+destination: ./bin
+
+plugins:
+  - module: 'github.com/P3rCh1/logcheck'
+    import: 'github.com/P3rCh1/logcheck/pkg/golangci'
+    path: .
+    name: logcheck
