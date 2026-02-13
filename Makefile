@@ -11,3 +11,6 @@ run: build
 
 version: build
 	./bin/logcheck version
+
+example: build
+	@cd internal/analyzer/testdata && ../../../bin/logcheck run ./...
