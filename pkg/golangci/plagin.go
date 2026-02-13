@@ -1,10 +1,9 @@
 package linters
 
 import (
+	"github.com/P3rCh1/logcheck/internal/analyzer"
 	"github.com/golangci/plugin-module-register/register"
 	"golang.org/x/tools/go/analysis"
-
-	"github.com/P3rCh1/logcheck/internal/analyzer"
 )
 
 func init() {

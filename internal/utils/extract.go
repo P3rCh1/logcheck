@@ -81,7 +81,6 @@ func extractArgNames(pass *analysis.Pass, e ast.Expr) []ItemAST {
 
 			if ident, ok := node.Fun.(*ast.Ident); ok {
 				args = append(args, ItemAST{ident.Name, e.Pos()})
-
 			} else if sel, ok := node.Fun.(*ast.SelectorExpr); ok {
 				if obj := pass.TypesInfo.ObjectOf(sel.Sel); obj != nil && obj.Pkg() != nil {
 					typeInfo := TypeInfo{Package: obj.Pkg().Path()}
