@@ -18,10 +18,10 @@ func CheckEnglish(info *utils.LogInfo) *analysis.Diagnostic {
 
 			if !unicode.Is(unicode.Latin, r) {
 				return &analysis.Diagnostic{
-					Pos:            msg.Pos,
-					End:            msg.End,
-					Message:        NotEnglishReport,
-					Category:       StyleCategory,
+					Pos:      msg.Pos,
+					End:      msg.End,
+					Message:  NotEnglishReport,
+					Category: StyleCategory,
 				}
 			}
 		}

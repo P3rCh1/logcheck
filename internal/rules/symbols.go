@@ -23,10 +23,10 @@ func CheckNoSymbolsAndEmoji(allowed map[rune]struct{}, info *utils.LogInfo) *ana
 		for _, r := range msg.Data {
 			if !isAllowed(allowed, r) {
 				return &analysis.Diagnostic{
-					Pos:            msg.Pos,
-					End:            msg.End,
-					Message:        SymbolOrEmojiReport,
-					Category:       StyleCategory,
+					Pos:      msg.Pos,
+					End:      msg.End,
+					Message:  SymbolOrEmojiReport,
+					Category: StyleCategory,
 				}
 			}
 		}
